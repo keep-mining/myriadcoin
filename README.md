@@ -23,6 +23,34 @@ PoW algorithms on the same chain.
 
 Myriadcoin improvements are documented as MIPs. See [doc/mips.md](doc/mips.md).
 
+Building on Modern Systems
+---------------------------
+
+As of this fork, `master` had not been updated in several years and no longer
+built on current toolchains (tested on Ubuntu 24.04, GCC 13). A handful of
+source files relied on standard library headers being pulled in transitively
+rather than including them directly; newer GCC/libstdc++ no longer guarantee
+this. This fork includes the minimal header fixes needed to build cleanly.
+
+No consensus or behavioral changes are included — only build fixes.
+
+Verified working build (node only, wallet disabled):
+
+```
+sudo apt-get install autoconf automake libtool pkg-config build-essential \
+    libboost-dev libboost-system-dev libboost-filesystem-dev \
+    libboost-thread-dev libboost-chrono-dev libboost-test-dev \
+    libboost-program-options-dev libssl-dev libevent-dev
+
+./autogen.sh
+./configure --without-gui --disable-tests --disable-bench --disable-wallet
+make
+```
+
+This produces a working `myriadcoind` that syncs and validates the chain.
+Wallet support (requires Berkeley DB 4.8, no longer packaged by most distros)
+is not yet restored in this fork — that's next.
+
 License
 -------
 
